@@ -46,7 +46,8 @@ namespace WebApplication7.Controllers
                 Id = userData.Id,
                 Login = userData.Login,
                 Password = userData.Password,
-                Name = userData.NewName
+                Name = userData.NewName,
+                city_id = userData.city_id
             };
 
             bool result = await _supabaseContext.InsertUsers(_supabaseClient, newUser);
@@ -238,6 +239,9 @@ namespace WebApplication7.Controllers
 
         [JsonProperty("newName")]
         public string NewName { get; set; }
+
+        [JsonProperty("city_id")]
+        public int city_id { get; set; }
     }
 
 
