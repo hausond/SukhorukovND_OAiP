@@ -122,6 +122,40 @@ namespace WebApplication7.Controllers
             }
         }
 
+        [HttpPut("UpdateUserName", Name = "UpdateUserName")]
+        public async Task<ActionResult> UpdateUserName([FromBody] UserDataName userDataName)
+        {
+            try
+            {
+                if (userDataName.Id <= 0)
+                {
+                    return BadRequest("Некорректные данные пользователя. Убедитесь, что ID, логин и пароль указаны.");
+                }
+
+                User updatedUser = new User
+                {
+                    Id = userDataName.Id,
+                    Name = userDataName.NewName
+                };
+
+                bool result = await _supabaseContext.UpdateUserName(_supabaseClient, updatedUser);
+
+                if (result)
+                {
+                    return Ok("Пользователь успешно обновлен.");
+                }
+                else
+                {
+                    return BadRequest("Не удалось обновить пользователя в БД.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Ошибка: {ex.Message}");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Произошла ошибка при обновлении пользователя.");
+            }
+        }
+
         [HttpPut("UpdateCity", Name = "UpdateCity")]
         public async Task<ActionResult> UpdateCity([FromBody] CityData CityData)
         {
@@ -242,6 +276,15 @@ namespace WebApplication7.Controllers
 
         [JsonProperty("city_id")]
         public int city_id { get; set; }
+    }
+
+    public class UserDataName
+    {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
+        [JsonProperty("newName")]
+        public string NewName { get; set; }
     }
 
 

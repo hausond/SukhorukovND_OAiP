@@ -80,6 +80,35 @@ namespace WebApplication7
             }
         }
 
+        public async Task<bool> UpdateUserName(Supabase.Client _supabaseClient, User updatedUser)
+        {
+            try
+            {
+                await _supabaseClient.From<User>()
+                                     .Where(user => user.Id == updatedUser.Id)
+                                     .Set(user => user.Name, updatedUser.Name)
+                                     .Update();
+
+                return true;
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.Error.WriteLine($"Ошибка HTTP-запроса: {ex.Message}");
+
+                if (ex.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    return false;
+                }
+
+                throw new ApplicationException("Не удалось подключиться к базе данных.", ex);
+            }
+            catch (Exception ex)
+            {
+                Console.Error.WriteLine($"Произошла ошибка: {ex.Message}");
+                throw new ApplicationException("Произошла ошибка при обновлении пользователя.", ex);
+            }
+        }
+
         public async Task<bool> UpdateCity(Supabase.Client _supabaseClient, City updatedCity)
         {
             try
